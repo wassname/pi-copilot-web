@@ -1,0 +1,13 @@
+{
+  "name": "pi-copilot-web",
+  "version": "0.1.0",
+  "description": "Minimal GitHub Copilot web_search for Pi - reuses github-copilot OAuth",
+  "type": "module",
+  "keywords": ["pi", "pi-extension", "github-copilot", "web-search"],
+  "license": "MIT",
+  "repository": {"type":"git","url":"https://github.com/wassname/pi-copilot-web"},
+  "files": ["index.ts","copilot-search.ts"],
+  "pi": {"extensions":["./index.ts"]},
+  "peerDependencies": {"@earendil-works/pi-coding-agent":"*","@earendil-works/pi-ai":"*","@earendil-works/pi-tui":"*"},
+  "devDependencies": {"typescript":"^5.9.0"}
+}
