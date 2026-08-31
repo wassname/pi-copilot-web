@@ -12,6 +12,7 @@ export interface SearchOptions {
   numResults?: number;
   recencyFilter?: "day"|"week"|"month"|"year";
   domainFilter?: string[];
+  verbatim?: boolean;
   signal?: AbortSignal;
 }
 
@@ -46,8 +47,8 @@ export async function resolveCopilotAuth(ctx: ExtensionContext, signal?: AbortSi
   // Try every github-copilot openai-responses model that has credentials
   let models: any[] = [];
   try { models = ctx.modelRegistry.getAll().filter((m:any)=> m.provider===COPILOT_PROVIDER && m.api==="openai-responses"); } catch {}
-  // prefer terra > sol > luna > others
-  const pref = (id:string)=> id.includes("terra") ? 0 : id.includes("sol") ? 1 : id.includes("luna") ? 2 : 10;
+  // prefer cheapest first: luna/mai-1.1-flash ($0.20/$1.20) > sol ($2/$10) > terra ($2/$12) > others
+  const pref = (id:string)=> id.includes("luna") || id.includes("mai-code-1.1") ? 0 : id.includes("sol") ? 1 : id.includes("terra") ? 2 : 10;
   models.sort((a,b)=> pref(a.id)-pref(b.id) || b.id.localeCompare(a.id, undefined,{numeric:true}));
 
   for (const model of models){
@@ -72,7 +73,9 @@ export async function isCopilotAvailable(ctx: ExtensionContext): Promise<boolean
 }
 
 function buildInstructions(options: SearchOptions): string {
-  const lines = ["Search the web and return a concise answer grounded only in the web results.", "Include clickable source citations when possible."];
+  const lines = options.verbatim
+    ? ["Search the web and return verbatim quotes with surrounding context for each claim, with clickable source citations. Do not paraphrase numbers, names, or dates; quote exactly."]
+    : ["Search the web and return a concise answer grounded only in the web results.", "Include clickable source citations when possible."];
   if (options.recencyFilter) {
     const labels: Record<string,string> = {day:"past 24 hours",week:"past week",month:"past month",year:"past year"};
     lines.push(`Prefer sources from the ${labels[options.recencyFilter]}.`);

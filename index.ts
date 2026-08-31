@@ -15,6 +15,7 @@ export default function(pi: ExtensionAPI){
       numResults: Type.Optional(Type.Number({description:"Results per query, default 5, max 20"})),
       recencyFilter: Type.Optional(Type.Union([Type.Literal("day"),Type.Literal("week"),Type.Literal("month"),Type.Literal("year")], {description:"Recency"})),
       domainFilter: Type.Optional(Type.Array(Type.String(), {description:"Limit to domains, prefix - to exclude"})),
+      verbatim: Type.Optional(Type.Boolean({description:"If true, return verbatim quotes with context instead of summary (more tokens/credits, more verifiable)"})),
     }),
     async execute(toolCallId, params, signal, onUpdate, ctx): Promise<AgentToolResult<Record<string,unknown>>>{
       const queries = (params as any).queries?.length ? (params as any).queries as string[] : [(params as any).query as string];
@@ -29,7 +30,7 @@ export default function(pi: ExtensionAPI){
         const errors: string[]=[];
         for (const q of clean.slice(0,5)){
           try {
-            const r = await searchWithCopilot(q, {numResults:(params as any).numResults, recencyFilter:(params as any).recencyFilter, domainFilter:(params as any).domainFilter, signal}, ctx);
+            const r = await searchWithCopilot(q, {numResults:(params as any).numResults, recencyFilter:(params as any).recencyFilter, domainFilter:(params as any).domainFilter, verbatim:(params as any).verbatim, signal}, ctx);
             allResults.push({query:q, answer:r.answer, results:r.results});
             onUpdate?.({content:[{type:"text", text: r.answer.slice(0,800)}], details:{streaming:true, query:q}});
           } catch(e){
