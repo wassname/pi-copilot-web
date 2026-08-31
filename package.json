@@ -1,13 +1,18 @@
 {
   "name": "pi-copilot-web",
   "version": "0.1.0",
-  "description": "Minimal GitHub Copilot web_search for Pi - reuses github-copilot OAuth",
+  "description": "GitHub Copilot web_search for Pi - reuses github-copilot OAuth, no extra API keys. Free plan works.",
   "type": "module",
-  "keywords": ["pi", "pi-extension", "github-copilot", "web-search"],
+  "keywords": ["pi-package","pi","pi-extension","web-search","github-copilot","copilot"],
   "license": "MIT",
-  "repository": {"type":"git","url":"https://github.com/wassname/pi-copilot-web"},
-  "files": ["index.ts","copilot-search.ts"],
+  "author": "wassname",
+  "repository": {"type":"git","url":"git+https://github.com/wassname/pi-copilot-web.git"},
+  "homepage": "https://github.com/wassname/pi-copilot-web#readme",
+  "bugs": {"url":"https://github.com/wassname/pi-copilot-web/issues"},
+  "files": ["index.ts","copilot-search.ts","README.md"],
   "pi": {"extensions":["./index.ts"]},
+  "publishConfig": {"access":"public"},
   "peerDependencies": {"@earendil-works/pi-coding-agent":"*","@earendil-works/pi-ai":"*","@earendil-works/pi-tui":"*"},
-  "devDependencies": {"typescript":"^5.9.0"}
+  "devDependencies": {"typescript":"^5.9.0"},
+  "engines": {"node": ">=22"}
 }
